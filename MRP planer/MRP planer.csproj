@@ -96,6 +96,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="GrossNeedItem.cs" />
     <Compile Include="ItemBuilder.xaml.cs">
       <DependentUpon>ItemBuilder.xaml</DependentUpon>
     </Compile>
@@ -105,6 +106,8 @@
     <Compile Include="MrpCalc.xaml.cs">
       <DependentUpon>MrpCalc.xaml</DependentUpon>
     </Compile>
+    <Compile Include="MrpItem.cs" />
+    <Compile Include="TableColumn.cs" />
     <Compile Include="WelcomePage.xaml.cs">
       <DependentUpon>WelcomePage.xaml</DependentUpon>
     </Compile>

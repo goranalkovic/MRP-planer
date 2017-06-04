@@ -14,64 +14,14 @@ using Windows.UI.Xaml.Controls;
 
 namespace MRP_planer
 {
-    public class MrpItem
-    {
-        public string Name { get; set; }
 
-        public int AcquireDays { get; set; }
-
-        public string LotSize { get; set; }
-
-        public int LotSizeNum { get; set; }
-
-        public int AvailableInStorage { get; set; }
-
-        public List<PlannedInputItem> PlannedInput { get; set; }
-
-        public List<GrossNeedItem> GrossNeeds { get; set; }
-
-        public Thickness IndentSize { get; set; }
-
-        public string ItemIcon { get; set; }
-        
-        public List<MrpItem> ItemChildren { get; set; }
-
-        public int Quantity { get; set; }
-
-        public int Level { get; set; }
-    }
-
-    //public class MainMrpItem
-    //{
-    //    public MrpItem GlobalObjectItems;
-
-    //    public void Update(MrpItem input)
-    //    {
-    //        GlobalObjectItems = input;
-    //    }
-
-    //    public MrpItem GetItem()
-    //    {
-    //        return GlobalObjectItems;
-    //    }
-    //}
-
-    public class GrossNeedItem
-    {
-        public string Textual { get; set; }
-
-        public int Days { get; set; }
-
-        public int Quantity { get; set; }
-    }
-
-    public class PlannedInputItem : GrossNeedItem {}
+    
     public sealed partial class MainPage
     {
         public ObservableCollection<GrossNeedItem> Grsnds = new ObservableCollection<GrossNeedItem>();
         public ObservableCollection<PlannedInputItem> PlndIns = new ObservableCollection<PlannedInputItem>();
         public MrpItem FirstItem;
-        private bool AddTestChildren = false;
+        private bool _addTestChildren = false;
         public MainPage()
         {
             CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
@@ -203,7 +153,7 @@ namespace MRP_planer
                 //    $"name: {mainItem.Name}, lotsize: {mainItem.LotSize} {mainItem.LotSizeNum}\nacqdays: {mainItem.AcquireDays}, planned: {mainItem.PlannedInput}\navail: {mainItem.AvailableInStorage}";
                 //validationName.ShowAt(btnFirstStep);
 
-                if (AddTestChildren)
+                if (_addTestChildren)
                 {
                     mainItem.ItemChildren = new List<MrpItem>()
                     {
@@ -351,7 +301,7 @@ namespace MRP_planer
 
             BtnRemoveGrossNeed.IsEnabled = true;
 
-            AddTestChildren = true;
+            _addTestChildren = true;
         }
 
       

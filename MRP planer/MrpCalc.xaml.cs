@@ -15,13 +15,31 @@ using Windows.UI.Xaml.Navigation;
 
 namespace MRP_planer
 {
-    public sealed partial class MrpCalc
+  public sealed partial class MrpCalc
     {
         public MrpItem MainItem = App.GlobalItem;
 
         public MrpCalc()
         {
             InitializeComponent();
+
+            DrawFirstTable();
+        }
+
+        private void DrawFirstTable()
+        {
+            var cols = new List<TableColumn>();
+
+            for (var i = 1; i <= MainItem.AcquireDays; i++)
+            {
+                cols.Add(new TableColumn(i));   
+            }
+
+            var lv = new StackPanel();
+
+            
+
+            Cols01.Children.Add(lv);
         }
     }
 }

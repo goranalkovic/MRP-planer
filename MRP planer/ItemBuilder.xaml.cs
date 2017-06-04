@@ -7,13 +7,8 @@ using Windows.UI.Xaml.Controls;
 
 // ReSharper disable PossibleNullReferenceException
 
-// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
-
 namespace MRP_planer
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
     public sealed partial class ItemBuilder
     {
         public ObservableCollection<GrossNeedItem> Grsnds = new ObservableCollection<GrossNeedItem>();
@@ -509,7 +504,6 @@ namespace MRP_planer
             InitListView(ObjectItems);
 
             LstObjectTree.ItemsSource = ListViewItems;
-
 
             LstObjectTree.SelectedIndex = 0;
 
