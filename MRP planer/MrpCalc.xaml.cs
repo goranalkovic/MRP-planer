@@ -13,16 +13,15 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
-
 namespace MRP_planer
 {
-    public sealed partial class MrpCalc : Page
+    public sealed partial class MrpCalc
     {
+        public MrpItem MainItem = App.GlobalItem;
 
         public MrpCalc()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
     }
 }

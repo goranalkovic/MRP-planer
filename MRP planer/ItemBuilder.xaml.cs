@@ -2,12 +2,9 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading.Tasks;
-using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Documents;
-using Windows.UI.Xaml.Navigation;
+
 // ReSharper disable PossibleNullReferenceException
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
@@ -23,6 +20,8 @@ namespace MRP_planer
         public ObservableCollection<PlannedInputItem> PlndIns = new ObservableCollection<PlannedInputItem>();
 
         public MrpItem FirstItem;
+        private List<MrpItem> _undoHelper = new List<MrpItem>();
+        private int _undoItemCounter;
 
         public MrpItem ObjectItems = new MrpItem();
         public ObservableCollection<MrpItem> ListViewItems = new ObservableCollection<MrpItem>();
@@ -163,6 +162,15 @@ namespace MRP_planer
 
         private void BtnDeleteCurrent_Click(object sender, RoutedEventArgs e)
         {
+            _undoHelper.Clear();
+            _undoItemCounter = 1;
+
+            foreach (var t in ObjectItems.ItemChildren)
+            {
+                _undoHelper.Add(t);
+                _undoItemCounter++;
+            }
+
             DeleteItem(LstObjectTree.SelectedItem as MrpItem);
 
             InitListView(ObjectItems);
@@ -170,6 +178,42 @@ namespace MRP_planer
             LstObjectTree.SelectedIndex = 0;
 
             BtnDeleteCurrent.IsEnabled = false;
+
+            var itemsWord = "";
+
+            switch (_undoItemCounter)
+            {
+                case 1:
+                case 21:
+                case 31:
+                case 41:
+                case 51:
+                    itemsWord = "stavka";
+                    break;
+                case 2:
+                case 3:
+                case 4:
+                case 22:
+                case 23:
+                case 24:
+                case 32:
+                case 33:
+                case 34:
+                case 42:
+                case 52:
+                case 53:
+                case 54:
+                    itemsWord = "stavke";
+                    break;
+                default:
+                    itemsWord = "stavki";
+                    break;
+            }
+
+            LblUndoMsg.Text = $"Obrisano {_undoItemCounter} {itemsWord}.";
+
+            DeletedBanner.Y = 0;
+
 
         }
 
@@ -238,27 +282,6 @@ namespace MRP_planer
         {
             MainPartAvailableQty.Text = OnlyNums(MainPartAvailableQty.Text);
         }
-
-        private void BtnAddGrsNeed_Click(object sender, RoutedEventArgs e)
-        {
-            TxtGrsNdAmount.Text = OnlyNums(TxtGrsNdAmount.Text);
-            TxtGrsNdDay.Text = OnlyNums(TxtGrsNdDay.Text);
-
-            var dys = int.Parse(TxtGrsNdDay.Text);
-            var amnt = int.Parse(TxtGrsNdAmount.Text);
-
-            var grossneed = new GrossNeedItem()
-            {
-                Days = dys,
-                Quantity = amnt,
-                Textual = $"{amnt} komad(a) potrebno {dys}. dan(a)"
-            };
-
-            Grsnds.Add(grossneed);
-            BtnRemoveGrossNeed.IsEnabled = true;
-        }
-
-
 
         private void CdAddNewItem_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
@@ -419,28 +442,80 @@ namespace MRP_planer
 
         private void MainPartName_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (MainPartName.Text.Length <= 0) return;
-            MainPartDays.IsEnabled = true;
+            MainPartDays.IsEnabled = MainPartName.Text.Length > 0;
+
+            if (MainPartDays.IsEnabled) return;
+            MainPartAvailableQty.IsEnabled = false;
+            MainPartQuantity.IsEnabled = false;
+            RadioLotSize1.IsChecked = false;
+            RadioLotSize2.IsChecked = false;
+            RadioLotSize3.IsChecked = false;
+            CmdBarGrossNeeds.IsEnabled = false;
+            CmdBarPlannedInputs.IsEnabled = false;
+            TxtGrsNdAmount.IsEnabled = false;
+            TxtGrsNdDay.IsEnabled = false;
+            TxtPlnInAmount.IsEnabled = false;
+            TxtPlnInDay.IsEnabled = false;
+            CdAddNewItem.IsPrimaryButtonEnabled = false;
         }
 
         private void MainPartQuantity_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (OnlyNums(MainPartQuantity.Text).Length <= 0) return;
-            RadioLotSize1.IsEnabled = true;
-            RadioLotSize2.IsEnabled = true;
-            RadioLotSize3.IsEnabled = true;
+            RadioLotSize1.IsEnabled = OnlyNums(MainPartQuantity.Text).Length > 0;
+            RadioLotSize2.IsEnabled = OnlyNums(MainPartQuantity.Text).Length > 0;
+            RadioLotSize3.IsEnabled = OnlyNums(MainPartQuantity.Text).Length > 0;
+
+            if (OnlyNums(MainPartQuantity.Text).Length > 0) return;
+            RadioLotSize1.IsChecked = false;
+            RadioLotSize2.IsChecked = false;
+            RadioLotSize3.IsChecked = false;
+            CmdBarGrossNeeds.IsEnabled = false;
+            CmdBarPlannedInputs.IsEnabled = false;
+            TxtGrsNdAmount.IsEnabled = false;
+            TxtGrsNdDay.IsEnabled = false;
+            TxtPlnInAmount.IsEnabled = false;
+            TxtPlnInDay.IsEnabled = false;
+            CdAddNewItem.IsPrimaryButtonEnabled = false;
         }
 
         private void MainPartAvailableQty_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (OnlyNums(MainPartAvailableQty.Text).Length <= 0) return;
-            MainPartQuantity.IsEnabled = true;
+            MainPartQuantity.IsEnabled = OnlyNums(MainPartAvailableQty.Text).Length > 0;
         }
 
         private void MainPartDays_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (OnlyNums(MainPartDays.Text).Length <= 0) return;
-            MainPartAvailableQty.IsEnabled = true;
+            MainPartAvailableQty.IsEnabled = OnlyNums(MainPartDays.Text).Length > 0;
+
+            if (MainPartAvailableQty.IsEnabled) return;
+            MainPartQuantity.IsEnabled = false;
+            RadioLotSize1.IsChecked = false;
+            RadioLotSize2.IsChecked = false;
+            RadioLotSize3.IsChecked = false;
+            CmdBarGrossNeeds.IsEnabled = false;
+            CmdBarPlannedInputs.IsEnabled = false;
+            TxtGrsNdAmount.IsEnabled = false;
+            TxtGrsNdDay.IsEnabled = false;
+            TxtPlnInAmount.IsEnabled = false;
+            TxtPlnInDay.IsEnabled = false;
+            CdAddNewItem.IsPrimaryButtonEnabled = false;
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            ObjectItems.ItemChildren.Clear();
+            ObjectItems.ItemChildren.AddRange(_undoHelper);
+
+            InitListView(ObjectItems);
+
+            LstObjectTree.ItemsSource = ListViewItems;
+
+
+            LstObjectTree.SelectedIndex = 0;
+
+            BtnDeleteCurrent.IsEnabled = false;
+
+            DeletedBanner.Y = 60;
         }
     }
 }

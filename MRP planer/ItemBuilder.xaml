@@ -16,7 +16,10 @@
             <EntranceThemeTransition FromVerticalOffset="0" FromHorizontalOffset="24"/>
         </TransitionCollection>
     </Page.Transitions>
-
+    <Page.Resources>
+        <SolidColorBrush x:Key="AppBlue" Color="#FF0078D7" />
+        <!-- Color: FF0078D7 -->
+    </Page.Resources>
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Width="Auto" Height="Auto">
         <Grid.RowDefinitions>
             <RowDefinition Height="48"/>
@@ -44,16 +47,15 @@
             </Grid.Background>
         </Grid>
 
-        <CommandBar Grid.Column="0" Grid.Row="0" Background="{x:Null}" DefaultLabelPosition="Right" Height="Auto" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch">
-            <CommandBar.Content>
-                <Grid Height="Auto" Margin="16,0" VerticalAlignment="Center">
-                    <TextBlock Text="Kreiranje sastavnice" Style="{StaticResource SubtitleTextBlockStyle}"/>
-                </Grid>
-            </CommandBar.Content>
-            <AppBarButton x:Name="BtnAddNew" Icon="Add" Label="Dodaj novo" Click="BtnAddNew_Click"/>
-            <AppBarButton x:Name="BtnDeleteCurrent" Icon="Delete" Label="Obriši" Click="BtnDeleteCurrent_Click" IsEnabled="False"/>
-        </CommandBar>
+        <RelativePanel Grid.Column="0" Grid.Row="0" Height="48" Width="Auto">
+            <TextBlock Text="Kreiranje sastavnice" Style="{StaticResource SubtitleTextBlockStyle}" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignVerticalCenterWithPanel="True" Padding="16,0,0,0"/>
+            <CommandBar Background="Transparent" RelativePanel.AlignRightWithPanel="True" DefaultLabelPosition="Right" OverflowButtonVisibility="Collapsed">
+                <AppBarButton x:Name="BtnAddNew" Icon="Add" Label="Dodaj novo" Click="BtnAddNew_Click"/>
+                <AppBarButton x:Name="BtnDeleteCurrent" Icon="Delete" Label="Obriši" Click="BtnDeleteCurrent_Click" IsEnabled="False"/>
+            </CommandBar>
+        </RelativePanel>
 
+        
 
         <ListView x:Name="LstObjectTree" Margin="48,24,64,48" SelectionChanged="LstObjectTree_SelectionChanged" HorizontalContentAlignment="Left" Grid.Row="1" Grid.Column="0" VerticalContentAlignment="Top">
             <ListView.ItemTemplate>
@@ -85,8 +87,8 @@
                 <RowDefinition Height="2.5*"/>
             </Grid.RowDefinitions>
             <StackPanel Orientation="Vertical" Width="200" HorizontalAlignment="Center" VerticalAlignment="Bottom" Grid.Row="0" Margin="0,32">
-                <TextBlock x:Name="ItemSelectedIcon" Foreground="#FF0078D7" Text="&#xE74C;" FontFamily="Segoe MDL2 Assets" FontSize="44" VerticalAlignment="Center" HorizontalAlignment="Center" />
-                <TextBlock x:Name="ItemSelectedName" Foreground="#FF0078D7" Text="Ime dijela" FontSize="16" VerticalAlignment="Center" Margin="0,4,0,0" HorizontalAlignment="Center" />
+                <TextBlock x:Name="ItemSelectedIcon" Foreground="{StaticResource AppBlue}" Text="&#xE74C;" FontFamily="Segoe MDL2 Assets" FontSize="44" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                <TextBlock x:Name="ItemSelectedName" Foreground="{StaticResource AppBlue}" Text="Ime dijela" FontSize="16" VerticalAlignment="Center" Margin="0,4,0,0" HorizontalAlignment="Center" />
                 <TextBlock x:Name="ItemSelectedQty" Text="5 komad(a)" FontSize="13" VerticalAlignment="Center" Margin="0,4,0,0" HorizontalAlignment="Center" Opacity="0.6"/>
 
 
@@ -122,7 +124,7 @@
                     <EdgeUIThemeTransition Edge="Top"/>
                 </TransitionCollection>
             </ContentDialog.Transitions>
-     
+
             <Grid Height="Auto" Width="700" HorizontalAlignment="Center" VerticalAlignment="Center">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="1*"/>
@@ -139,8 +141,8 @@
                         <!-- Ikona -->
                         <StackPanel Orientation="Vertical">
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock TextWrapping="Wrap" Text="&#xED5B;" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" FontSize="20" Foreground="#FF0078D7"/>
-                                <TextBlock TextWrapping="Wrap" Text="Ikona" VerticalAlignment="Center" FontSize="15" Foreground="#FF0078D7" Margin="4,0,0,0"/>
+                                <TextBlock TextWrapping="Wrap" Text="&#xED5B;" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" FontSize="20" Foreground="{StaticResource AppBlue}"/>
+                                <TextBlock TextWrapping="Wrap" Text="Ikona" VerticalAlignment="Center" FontSize="15" Foreground="{StaticResource AppBlue}" Margin="4,0,0,0"/>
                             </StackPanel>
                             <ComboBox x:Name="MainPartIcon" HorizontalAlignment="Left" VerticalAlignment="Top" PlaceholderText="" FontFamily="Segoe MDL2 Assets" FontSize="40" RequestedTheme="Light" SelectedIndex="0" Margin="0,8,0,0">
                                 <ComboBoxItem Content="&#xF158;" />
@@ -184,8 +186,8 @@
 
                         <!-- Naziv -->
                         <StackPanel Orientation="Horizontal" Margin="0,16,0,0">
-                            <TextBlock TextWrapping="Wrap" Text="&#xE8E9;" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" FontSize="20" Foreground="#FF0078D7"/>
-                            <TextBlock TextWrapping="Wrap" Text="Naziv proizvoda" VerticalAlignment="Center" FontSize="15" Foreground="#FF0078D7" Margin="4,0,0,0"/>
+                            <TextBlock TextWrapping="Wrap" Text="&#xE8E9;" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" FontSize="20" Foreground="{StaticResource AppBlue}"/>
+                            <TextBlock TextWrapping="Wrap" Text="Naziv proizvoda" VerticalAlignment="Center" FontSize="15" Foreground="{StaticResource AppBlue}" Margin="4,0,0,0"/>
                         </StackPanel>
                         <StackPanel Orientation="Vertical">
                             <TextBox x:Name="MainPartName" HorizontalAlignment="Center" TextWrapping="Wrap" Text="" VerticalAlignment="Bottom" Width="220" TextAlignment="DetectFromContent" HorizontalContentAlignment="Left" IsTextPredictionEnabled="False" IsSpellCheckEnabled="False" Margin="0,8,0,0" TextChanged="MainPartName_TextChanged" InputScope="Default"/>
@@ -195,30 +197,30 @@
 
                         <!-- Vrijeme dobave -->
                         <StackPanel Orientation="Horizontal" Margin="0,16,0,0">
-                            <TextBlock TextWrapping="Wrap" Text="&#xE2AD;" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" FontSize="20" Foreground="#FF0078D7"/>
-                            <TextBlock TextWrapping="Wrap" Text="Vrijeme dobave (dana)" VerticalAlignment="Center" FontSize="15" Foreground="#FF0078D7" Margin="4,0,0,0"/>
+                            <TextBlock TextWrapping="Wrap" Text="&#xE2AD;" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" FontSize="20" Foreground="{StaticResource AppBlue}"/>
+                            <TextBlock TextWrapping="Wrap" Text="Vrijeme dobave (dana)" VerticalAlignment="Center" FontSize="15" Foreground="{StaticResource AppBlue}" Margin="4,0,0,0"/>
                         </StackPanel>
                         <TextBox x:Name="MainPartDays" TextWrapping="Wrap" Text="" Width="220" HorizontalContentAlignment="Left" IsTextPredictionEnabled="False" IsSpellCheckEnabled="False" InputScope="Number" LostFocus="MainPartDays_LostFocus" Margin="0,8,0,0" IsEnabled="False" TextChanged="MainPartDays_TextChanged"/>
 
                         <!-- Raspoloživo -->
                         <StackPanel Orientation="Horizontal" Margin="0,16,0,0">
-                            <TextBlock TextWrapping="Wrap" Text="&#xE73E;" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" FontSize="20" Foreground="#FF0078D7"/>
-                            <TextBlock TextWrapping="Wrap" Text="Raspoloživo na skladištu" VerticalAlignment="Center" FontSize="15" Foreground="#FF0078D7" Margin="4,0,0,0"/>
+                            <TextBlock TextWrapping="Wrap" Text="&#xE73E;" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" FontSize="20" Foreground="{StaticResource AppBlue}"/>
+                            <TextBlock TextWrapping="Wrap" Text="Raspoloživo na skladištu" VerticalAlignment="Center" FontSize="15" Foreground="{StaticResource AppBlue}" Margin="4,0,0,0"/>
                         </StackPanel>
                         <TextBox x:Name="MainPartAvailableQty" TextWrapping="Wrap" Text="" Width="220" HorizontalContentAlignment="Left" IsTextPredictionEnabled="False" IsSpellCheckEnabled="False" InputScope="Number" LostFocus="MainPartAvailableQty_LostFocus" Margin="0,8,0,0" IsEnabled="False" TextChanged="MainPartAvailableQty_TextChanged"/>
 
                         <!-- Količina -->
                         <StackPanel Orientation="Horizontal" Margin="0,16,0,0">
-                            <TextBlock Text="&#xE148;" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" FontSize="20" Foreground="#FF0078D7"/>
-                            <TextBlock TextWrapping="Wrap" Text="Količina" VerticalAlignment="Center" FontSize="15" Foreground="#FF0078D7" Margin="4,0,0,0"/>
+                            <TextBlock Text="&#xE148;" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" FontSize="20" Foreground="{StaticResource AppBlue}"/>
+                            <TextBlock TextWrapping="Wrap" Text="Količina" VerticalAlignment="Center" FontSize="15" Foreground="{StaticResource AppBlue}" Margin="4,0,0,0"/>
                         </StackPanel>
                         <TextBox x:Name="MainPartQuantity" TextWrapping="Wrap" Text="" Width="220" HorizontalContentAlignment="Left" IsSpellCheckEnabled="False" InputScope="Number" LostFocus="MainPartQuantity_LostFocus" IsTextPredictionEnabled="False" Margin="0,8,0,0" IsEnabled="False" TextChanged="MainPartQuantity_TextChanged"/>
 
                         <!-- Šarža -->
                         <StackPanel Orientation="Vertical" Margin="0,16,0,0">
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top">
-                                <TextBlock TextWrapping="Wrap" Text="&#xE7B8;" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" FontSize="20" Foreground="#FF0078D7"/>
-                                <TextBlock TextWrapping="Wrap" Text="Šarža" VerticalAlignment="Center" FontSize="15" Foreground="#FF0078D7" Margin="4,0,0,0"/>
+                                <TextBlock TextWrapping="Wrap" Text="&#xE7B8;" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" FontSize="20" Foreground="{StaticResource AppBlue}"/>
+                                <TextBlock TextWrapping="Wrap" Text="Šarža" VerticalAlignment="Center" FontSize="15" Foreground="{StaticResource AppBlue}" Margin="4,0,0,0"/>
                             </StackPanel>
 
                             <RadioButton x:Name="RadioLotSize1" Content="Lot for lot (L4L)" GroupName="lotsize" Background="{x:Null}" Checked="RadioLotSize1_Checked" Margin="0,8,0,0" IsEnabled="False"/>
@@ -240,8 +242,8 @@
                     <StackPanel Orientation="Vertical" HorizontalAlignment="Left">
                         <!-- Planirano -->
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="&#xE2B3;" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" FontSize="20" Foreground="#FF0078D7"/>
-                            <TextBlock TextWrapping="Wrap" Text="Planirani ulazi" VerticalAlignment="Center" FontSize="15" Foreground="#FF0078D7" Margin="4,0,0,0"/>
+                            <TextBlock Text="&#xE2B3;" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" FontSize="20" Foreground="{StaticResource AppBlue}"/>
+                            <TextBlock TextWrapping="Wrap" Text="Planirani ulazi" VerticalAlignment="Center" FontSize="15" Foreground="{StaticResource AppBlue}" Margin="4,0,0,0"/>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" Margin="0,12,0,0" HorizontalAlignment="Right">
                             <TextBox x:Name="TxtPlnInAmount" HorizontalAlignment="Left" TextWrapping="Wrap" Text="" VerticalAlignment="Center" Width="27" MinWidth="40" IsEnabled="False"/>
@@ -266,8 +268,8 @@
 
 
                         <StackPanel Orientation="Horizontal" Margin="0,24,0,0">
-                            <TextBlock TextWrapping="Wrap" Text="&#xF0E3;" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" FontSize="20" Foreground="#FF0078D7"/>
-                            <TextBlock TextWrapping="Wrap" Text="Bruto potrebe" VerticalAlignment="Center" FontSize="15" Foreground="#FF0078D7" Margin="4,0,0,0"/>
+                            <TextBlock TextWrapping="Wrap" Text="&#xF0E3;" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" FontSize="20" Foreground="{StaticResource AppBlue}"/>
+                            <TextBlock TextWrapping="Wrap" Text="Bruto potrebe" VerticalAlignment="Center" FontSize="15" Foreground="{StaticResource AppBlue}" Margin="4,0,0,0"/>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" Margin="0,12,0,0" HorizontalAlignment="Right">
                             <TextBox x:Name="TxtGrsNdAmount" HorizontalAlignment="Left" TextWrapping="Wrap" Text="" VerticalAlignment="Center" Width="27" MinWidth="40" IsEnabled="False"/>
@@ -294,5 +296,17 @@
             </Grid>
         </ContentDialog>
 
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Height="48" Padding="16,0,16,0" VerticalAlignment="Bottom" RenderTransformOrigin="0.5,0.5" Grid.Row="1" Grid.Column="0" Background="{ThemeResource AppBarBackground}" RequestedTheme="Dark">
+            <StackPanel.RenderTransform>
+                <TranslateTransform x:Name="DeletedBanner" Y="60"/>
+            </StackPanel.RenderTransform>
+            <TextBlock Text="Stavka je obrisana." x:Name="LblUndoMsg" VerticalAlignment="Center"/>
+            <Button Margin="96,0,0,0" Background="{StaticResource AppBlue}" Foreground="White"  VerticalAlignment="Center" Click="Button_Click">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="13" VerticalAlignment="Center">&#xE10E;</TextBlock>
+                    <TextBlock Margin="8,0,0,0">Poništi</TextBlock>
+                </StackPanel>
+            </Button>
+        </StackPanel>
     </Grid>
 </Page>
