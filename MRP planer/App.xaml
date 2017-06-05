@@ -4,5 +4,10 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:MRP_planer"
     RequestedTheme="Light">
+    
+    <Application.Resources>
+        <SolidColorBrush x:Key="AppBlue" Color="#FF0078D7" />
+        <!-- Color: FF0078D7 -->
 
+    </Application.Resources>
 </Application>
