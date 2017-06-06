@@ -128,6 +128,8 @@
             </Grid.Background>
         </Grid>
 
+        <ToggleSwitch x:Name="Switch1" Header="Test podaci" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="24,0,0,64" RequestedTheme="Dark" OffContent="1" OnContent="2"/>
+
         <HyperlinkButton Grid.Column="0" Content="Ubaci testne podatke" HorizontalAlignment="Left" Margin="24,0,0,24" VerticalAlignment="Bottom" IsTabStop="False" Click="HyperlinkButton_Click" RequestedTheme="Dark" Foreground="White" HorizontalContentAlignment="Left" VerticalContentAlignment="Bottom"/>
 
 

@@ -4,27 +4,27 @@
     {
         public int Period { get; set; }
 
-        public string GrossNeed { get; set; }
+        public double GrossNeed { get; set; }
 
-        public string PlannedInput { get; set; }
+        public double PlannedInput { get; set; }
 
-        public string AvailableQty { get; set; }
+        public double AvailableQty { get; set; }
 
-        public string NetNeeds { get; set; }
+        public double NetNeeds { get; set; }
 
-        public string PlannedGet { get; set; }
+        public double PlannedGet { get; set; }
 
-        public string PlannedSend { get; set; }
+        public double PlannedSend { get; set; }
 
-        public TableColumn(int period, string grsnd = "", string plndin = "", string availq = "", string netnds = "", string plndget = "", string plndsnd = "")
-        {
-            Period = period;
-            GrossNeed = grsnd;
-            PlannedInput = plndin;
-            AvailableQty = availq;
-            NetNeeds = netnds;
-            PlannedGet = plndget;
-            PlannedSend = plndsnd;
-        }
+        //public TableColumn(int period, double grsnd = 0.0, double plndin = 0.0, double availq = 0.0, double netnds = 0.0, double plndget = 0.0, double plndsnd = 0.0)
+        //{
+        //    Period = period;
+        //    GrossNeed = grsnd;
+        //    PlannedInput = plndin;
+        //    AvailableQty = availq;
+        //    NetNeeds = netnds;
+        //    PlannedGet = plndget;
+        //    PlannedSend = plndsnd;
+        //}
     }
 }

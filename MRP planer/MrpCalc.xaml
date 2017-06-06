@@ -32,11 +32,10 @@
 
         <TextBlock Grid.Row="0" HorizontalAlignment="Left" Margin="16,0" TextWrapping="Wrap" Text="MRP tablice" VerticalAlignment="Center" Style="{StaticResource SubtitleTextBlockStyle}"/>
 
-       
-        
-        <ScrollViewer Margin="32" Width="Auto" Height="Auto" Grid.Row="1" Grid.Column="0" HorizontalScrollMode="Enabled" IsHorizontalRailEnabled="True">
-            <ItemsControl x:Name="TableItems" HorizontalContentAlignment="Left" Height="Auto" Width="Auto" />
+
+        <ScrollViewer Margin="0" Width="Auto" Height="Auto" Padding="32, 16" Grid.Row="1" Grid.Column="0" HorizontalScrollMode="Enabled" IsHorizontalRailEnabled="True" HorizontalScrollBarVisibility="Auto">
+            <ItemsControl x:Name="TableItems" Padding="0" Margin="0"/>
         </ScrollViewer>
     </Grid>
-    
+     
 </Page>

@@ -159,7 +159,7 @@ namespace MRP_planer
                     {
                         new MrpItem()
                         {
-                            AcquireDays = 5,
+                            AcquireDays = 2,
                             AvailableInStorage = 10,
                             GrossNeeds = new List<GrossNeedItem>(),
                             IndentSize = new Thickness(30, 0, 0 ,0),
@@ -190,7 +190,7 @@ namespace MRP_planer
                                     LotSize = "Mult ",
                                     LotSizeNum = 10,
                                     Name = "Listovi 0,15 mm",
-                                    PlannedInput = new List<PlannedInputItem>() { new PlannedInputItem() { Days = 1, Quantity = 10, Textual = "10 komad(a) 1. dan(a)" } },
+                                    PlannedInput = new List<PlannedInputItem>() { new PlannedInputItem() { Days = 1, Quantity = 10, Textual = "10 komada 1. dana" } },
                                     ItemChildren = new List<MrpItem>(),
                                     Quantity = 2,
                                     Level = 2
@@ -205,7 +205,7 @@ namespace MRP_planer
                                     LotSize = "Mult ",
                                     LotSizeNum = 10,
                                     Name = "Listovi 0,05 mm",
-                                    PlannedInput = new List<PlannedInputItem>() { new PlannedInputItem() { Days = 1, Quantity = 10, Textual = "10 komad(a) 1. dan(a)" } },
+                                    PlannedInput = new List<PlannedInputItem>() { new PlannedInputItem() { Days = 1, Quantity = 10, Textual = "10 komada 1. dana" } },
                                     ItemChildren = new List<MrpItem>(),
                                     Quantity = 200,
                                     Level = 2
@@ -216,7 +216,8 @@ namespace MRP_planer
                             LotSizeNum = 1,
                             Name = "Listovi",
                             PlannedInput = new List<PlannedInputItem>(),
-                            Quantity = 1
+                            Quantity = 1,
+                            Level = 1
                         }
                     };
                 }
@@ -225,7 +226,7 @@ namespace MRP_planer
                     mainItem.ItemChildren = new List<MrpItem>();
                 }
 
-                App.GlobalItem = mainItem;
+                App.GlobalItem = mainItem.Clone();
 
                 Frame.Navigate(typeof(MainApp));
             }
@@ -275,33 +276,97 @@ namespace MRP_planer
 
         private void HyperlinkButton_Click(object sender, RoutedEventArgs e)
         {
-            MainPartIcon.SelectedIndex = 27;
-            MainPartName.Text = "Knjiga";
-            MainPartDays.Text = "2";
-            MainPartAvailableQty.Text = "0";
-            RadioLotSize1.IsChecked = true;
-            MainPartQuantity.Text = "1";
-
-            var tstneed = new GrossNeedItem()
+            if (Switch1.IsOn)
             {
-                Days = 6,
-                Quantity = 35,
-                Textual = "35 komad(a) potrebno 6. dan(a)"
-            };
+                MainPartIcon.SelectedIndex = 27;
+                MainPartName.Text = "Knjiga";
+                MainPartDays.Text = "2";
+                MainPartAvailableQty.Text = "0";
+                RadioLotSize1.IsChecked = true;
+                MainPartQuantity.Text = "1";
 
-            var tstneed2 = new GrossNeedItem()
+                var tstneed = new GrossNeedItem()
+                {
+                    Days = 6,
+                    Quantity = 35,
+                    Textual = "35 komada potrebno 6. dana"
+                };
+
+                var tstneed2 = new GrossNeedItem()
+                {
+                    Days = 8,
+                    Quantity = 25,
+                    Textual = "25 komada potrebno 8. dana"
+                };
+
+                Grsnds.Add(tstneed);
+                Grsnds.Add(tstneed2);
+
+                BtnRemoveGrossNeed.IsEnabled = true;
+
+                _addTestChildren = true;
+            }
+            else
             {
-                Days = 8,
-                Quantity = 25,
-                Textual = "25 komad(a) potrebno 8. dan(a)"
-            };
+                MainPartIcon.SelectedIndex = 6;
+                MainPartName.Text = "Registrator";
+                MainPartDays.Text = "1";
+                MainPartAvailableQty.Text = "25";
+                RadioLotSize1.IsChecked = true;
+                MainPartQuantity.Text = "1";
 
-            Grsnds.Add(tstneed);
-            Grsnds.Add(tstneed2);
+                var tstneed = new GrossNeedItem()
+                {
+                    Days = 1,
+                    Quantity = 85,
+                    Textual = "85 komada potrebno 1. dana"
+                };
 
-            BtnRemoveGrossNeed.IsEnabled = true;
+                var tstneed2 = new GrossNeedItem()
+                {
+                    Days = 2,
+                    Quantity = 95,
+                    Textual = "95 komada potrebno 2. dana"
+                };
 
-            _addTestChildren = true;
+                var tstneed3 = new GrossNeedItem()
+                {
+                    Days = 3,
+                    Quantity = 120,
+                    Textual = "120 komada potrebno 3. dana"
+                };
+
+                var tstneed4 = new GrossNeedItem()
+                {
+                    Days = 4,
+                    Quantity = 100,
+                    Textual = "25 komada potrebno 4. dana"
+                };
+
+                var tstneed5 = new GrossNeedItem()
+                {
+                    Days = 5,
+                    Quantity = 100,
+                    Textual = "100 komada potrebno 5. dana"
+                };
+
+                Grsnds.Add(tstneed);
+                Grsnds.Add(tstneed2);
+                Grsnds.Add(tstneed3);
+                Grsnds.Add(tstneed4);
+                Grsnds.Add(tstneed5);
+
+                PlndIns.Add(new PlannedInputItem()
+                {
+                    Days = 1,
+                    Quantity = 175,
+                    Textual = "175 komada potrebno 1. dana"
+                });
+
+                BtnRemoveGrossNeed.IsEnabled = true;
+
+                _addTestChildren = false;
+            }
         }
 
       
@@ -340,11 +405,13 @@ namespace MRP_planer
             var dys = int.Parse(TxtGrsNdDay.Text);
             var amnt = int.Parse(TxtGrsNdAmount.Text);
 
+            var qtyWord = amnt.ToString().EndsWith("1") ? "komad" : "komada";
+
             var grossneed = new GrossNeedItem()
             {
                 Days = dys,
                 Quantity = amnt,
-                Textual = $"{amnt} komad(a) potrebno {dys}. dan(a)"
+                Textual = $"{amnt} {qtyWord} potrebno {dys}. dana"
             };
 
             Grsnds.Add(grossneed);
@@ -390,11 +457,13 @@ namespace MRP_planer
             var dys = int.Parse(TxtPlnInDay.Text);
             var amnt = int.Parse(TxtPlnInAmount.Text);
 
+            var qtyWord = amnt.ToString().EndsWith("1") ? "komad" : "komada";
+
             var plndin = new PlannedInputItem()
             {
                 Days = dys,
                 Quantity = amnt,
-                Textual = $"{amnt} komad(a) {dys}. dan(a)"
+                Textual = $"{amnt} {qtyWord} {dys}. dana"
             };
 
             PlndIns.Add(plndin);

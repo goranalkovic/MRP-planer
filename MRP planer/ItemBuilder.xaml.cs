@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Navigation;
 
 // ReSharper disable PossibleNullReferenceException
 
@@ -14,14 +17,15 @@ namespace MRP_planer
         public ObservableCollection<GrossNeedItem> Grsnds = new ObservableCollection<GrossNeedItem>();
         public ObservableCollection<PlannedInputItem> PlndIns = new ObservableCollection<PlannedInputItem>();
 
-        public MrpItem FirstItem;
-        private List<MrpItem> _undoHelper = new List<MrpItem>();
-        private int _undoItemCounter;
-
         public MrpItem ObjectItems = new MrpItem();
         public ObservableCollection<MrpItem> ListViewItems = new ObservableCollection<MrpItem>();
 
+        public MrpItem UndoHelper;
+        public int UndoItemCounter;
+
         public bool IsInitialised = false;
+        public static CancellationTokenSource WaitCancelSrc = new CancellationTokenSource();
+        public static CancellationToken WaitCancel = WaitCancelSrc.Token;
 
         public ItemBuilder()
         {
@@ -32,15 +36,20 @@ namespace MRP_planer
 
             if (IsInitialised) return;
 
-            var mainitem = App.GlobalItem;
+            ObjectItems = App.GlobalItem.Clone();
 
-            ObjectItems = App.GlobalItem;
-
-            InitListView(mainitem);
+            InitListView(ObjectItems);
 
             LstObjectTree.ItemsSource = ListViewItems;
 
             LstObjectTree.SelectedIndex = 0;
+
+
+        }
+
+        protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
+        {
+            App.GlobalItem = ObjectItems.Clone();
         }
 
         private void InitListView(MrpItem item)
@@ -53,12 +62,10 @@ namespace MRP_planer
         private void FillListView(MrpItem l)
         {
             ListViewItems.Add(l);
-            if (l.ItemChildren != null)
+            if (l.ItemChildren == null || l.ItemChildren.Count <= 0) return;
+            foreach (var subitem in l.ItemChildren)
             {
-                foreach (var subitem in l.ItemChildren)
-                {
-                    FillListView(subitem);
-                }
+                FillListView(subitem);
             }
         }
 
@@ -75,7 +82,12 @@ namespace MRP_planer
             {
                 ItemSelectedIcon.Text = selected.ItemIcon;
                 ItemSelectedName.Text = $"{selected.Name}";
-                ItemSelectedQty.Text = $"{selected.Quantity} komad(a)";
+                var qtyWord = selected.Quantity.ToString().EndsWith("1") ? "komad" : "komada";
+#if DEBUG
+                ItemSelectedQty.Text = $"{selected.Quantity} {qtyWord} p: {FindParent(ObjectItems, selected).Name}";
+#else
+                ItemSelectedQty.Text = $"{selected.Quantity} {qtyWord}";
+#endif
                 ItemSelectedAcqTime.Text = $"{selected.AcquireDays} dan(a)";
                 ItemSelectedAvailable.Text = $"{selected.AvailableInStorage}";
 
@@ -120,6 +132,8 @@ namespace MRP_planer
 
         private void DeleteItem(MrpItem l)
         {
+            UndoHelper = ObjectItems.Clone();
+
             var par = FindParent(ObjectItems, l);
 
             if (par.ItemChildren.Count > 1)
@@ -128,9 +142,8 @@ namespace MRP_planer
                 return;
             }
 
-
             if (par.ItemChildren.Count == 1)
-                par.ItemChildren = null;
+                par.ItemChildren.Clear();
         }
 
         private void AddItem(MrpItem l, MrpItem parent)
@@ -157,14 +170,11 @@ namespace MRP_planer
 
         private void BtnDeleteCurrent_Click(object sender, RoutedEventArgs e)
         {
-            _undoHelper.Clear();
-            _undoItemCounter = 1;
+       UndoItemCounter = 0;
 
+            // ReSharper disable once UnusedVariable
             foreach (var t in ObjectItems.ItemChildren)
-            {
-                _undoHelper.Add(t);
-                _undoItemCounter++;
-            }
+                UndoItemCounter++;
 
             DeleteItem(LstObjectTree.SelectedItem as MrpItem);
 
@@ -174,42 +184,48 @@ namespace MRP_planer
 
             BtnDeleteCurrent.IsEnabled = false;
 
-            var itemsWord = "";
+            string itemsWord;
+            string numItemsWord;
 
-            switch (_undoItemCounter)
+            if ((LstObjectTree.SelectedItem as MrpItem).Level == 1)
+                UndoItemCounter--;
+
+            if (UndoItemCounter.ToString().EndsWith("1"))
             {
-                case 1:
-                case 21:
-                case 31:
-                case 41:
-                case 51:
-                    itemsWord = "stavka";
-                    break;
-                case 2:
-                case 3:
-                case 4:
-                case 22:
-                case 23:
-                case 24:
-                case 32:
-                case 33:
-                case 34:
-                case 42:
-                case 52:
-                case 53:
-                case 54:
-                    itemsWord = "stavke";
-                    break;
-                default:
-                    itemsWord = "stavki";
-                    break;
+                itemsWord = "stavka";
+                numItemsWord = "Obrisana";
+            }
+            else if (UndoItemCounter.ToString().EndsWith("2") || UndoItemCounter.ToString().EndsWith("3"))
+            {
+                itemsWord = "stavke";
+                numItemsWord = "Obrisane";
+            }
+            else
+            {
+                itemsWord = "stavki";
+                numItemsWord = "Obrisano";
             }
 
-            LblUndoMsg.Text = $"Obrisano {_undoItemCounter} {itemsWord}.";
+            LblUndoMsg.Text = $"{numItemsWord} {UndoItemCounter} {itemsWord}";
 
             DeletedBanner.Y = 0;
 
+            var waitTaskFactory = new TaskFactory();
+            var wait = new Task(async () =>
+            {
+                while (!WaitCancel.IsCancellationRequested)
+                {
+                    await Task.Delay(TimeSpan.FromSeconds(3));
+                    await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => {
+                        DeletedBanner.Y = 60;
+                    });
+                }
+            }, WaitCancel);
 
+            waitTaskFactory.StartNew(() =>
+            {
+                wait.Start();
+            });
         }
 
         private async void BtnAddNew_Click(object sender, RoutedEventArgs e)
@@ -362,11 +378,13 @@ namespace MRP_planer
             var dys = int.Parse(TxtPlnInDay.Text);
             var amnt = int.Parse(TxtPlnInAmount.Text);
 
+            var qtyWord = amnt.ToString().EndsWith("1") ? "komad" : "komada";
+
             var plndin = new PlannedInputItem()
             {
                 Days = dys,
                 Quantity = amnt,
-                Textual = $"{amnt} komad(a) {dys}. dan(a)"
+                Textual = $"{amnt} {qtyWord} {dys}. dana"
             };
 
             PlndIns.Add(plndin);
@@ -403,11 +421,13 @@ namespace MRP_planer
             var dys = int.Parse(TxtGrsNdDay.Text);
             var amnt = int.Parse(TxtGrsNdAmount.Text);
 
+            var qtyWord = amnt.ToString().EndsWith("1") ? "komad" : "komada";
+
             var grossneed = new GrossNeedItem()
             {
                 Days = dys,
                 Quantity = amnt,
-                Textual = $"{amnt} komad(a) potrebno {dys}. dan(a)"
+                Textual = $"{amnt} {qtyWord} potrebno {dys}. dana"
             };
 
             Grsnds.Add(grossneed);
@@ -496,14 +516,13 @@ namespace MRP_planer
             CdAddNewItem.IsPrimaryButtonEnabled = false;
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void UndoDelete(object sender, RoutedEventArgs e)
         {
-            ObjectItems.ItemChildren.Clear();
-            ObjectItems.ItemChildren.AddRange(_undoHelper);
+            WaitCancelSrc.Cancel();
+
+            ObjectItems = UndoHelper.Clone();
 
             InitListView(ObjectItems);
-
-            LstObjectTree.ItemsSource = ListViewItems;
 
             LstObjectTree.SelectedIndex = 0;
 
