@@ -10,7 +10,51 @@
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     MinWidth="1000"
     MinHeight="700">
-
+    <Page.Resources>
+        <Style TargetType="ListViewItem">
+            <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
+            <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+            <Setter Property="TabNavigation" Value="Local"/>
+            <Setter Property="IsHoldingEnabled" Value="True"/>
+            <Setter Property="Padding" Value="12,0,12,0"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="MinWidth" Value="{ThemeResource ListViewItemMinWidth}"/>
+            <Setter Property="MinHeight" Value="{ThemeResource ListViewItemMinHeight}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListViewItem">
+                        <ListViewItemPresenter
+                            ContentTransitions="{TemplateBinding ContentTransitions}"
+                            SelectionCheckMarkVisualEnabled="True"
+                            CheckBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
+                            CheckBoxBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
+                            DragBackground="{ThemeResource ListViewItemDragBackgroundThemeBrush}"
+                            DragForeground="{ThemeResource ListViewItemDragForegroundThemeBrush}"
+                            FocusBorderBrush="{ThemeResource SystemControlForegroundAltHighBrush}"
+                            FocusSecondaryBorderBrush="{ThemeResource SystemControlForegroundBaseHighBrush}"
+                            PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}"
+                            PointerOverBackground="{ThemeResource SystemControlHighlightListLowBrush}"
+                            PointerOverForeground="{ThemeResource SystemControlHighlightAltBaseHighBrush}"
+                            SelectedBackground="#33FFFFFF"
+                            SelectedForeground="{ThemeResource SystemControlHighlightAltBaseHighBrush}"
+                            SelectedPointerOverBackground="{ThemeResource SystemControlHighlightListAccentMediumBrush}"
+                            PressedBackground="{ThemeResource SystemControlHighlightListMediumBrush}"
+                            SelectedPressedBackground="{ThemeResource SystemControlHighlightListAccentHighBrush}"
+                            DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}"
+                            DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}"
+                            ReorderHintOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
+                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                            ContentMargin="{TemplateBinding Padding}"
+                            CheckMode="Inline"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Page.Resources>
     <Grid Background="#FF0078D7" Width="Auto" Height="Auto">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="200"/>
@@ -24,24 +68,26 @@
             </interactivity:Interaction.Behaviors>
         </Grid>
 
-        <Grid Opacity="0.85" Grid.ColumnSpan="2">
+        <Grid Opacity="0.85" Grid.ColumnSpan="2" Grid.Column="0">
             <Grid.Background>
                 <ImageBrush Stretch="None" ImageSource="Assets/win10_acryllic_noise.png"/>
             </Grid.Background>
         </Grid>
 
-        <TextBlock HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" RequestedTheme="Dark" Text="MRP kalkulator" VerticalAlignment="Top" Style="{StaticResource CaptionTextBlockStyle}"/>
-        <Frame x:Name="frmMain" Content="" Background="#FFE4E4E4" Grid.Column="1"/>
+        <TextBlock Grid.Column="0" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" RequestedTheme="Dark" Text="MRP kalkulator" VerticalAlignment="Top" Style="{StaticResource CaptionTextBlockStyle}"/>
+        <Frame x:Name="FrmMain" Content="" Background="#FFE4E4E4" Grid.Column="1"/>
 
-        <TextBlock x:Name="lblDebug1" HorizontalAlignment="Left" Margin="25,458,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" FontSize="12" RequestedTheme="Dark" Visibility="Collapsed"/>
+        <TextBlock Grid.Column="0" HorizontalAlignment="Left" Margin="25,458,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" FontSize="12" RequestedTheme="Dark" Visibility="Collapsed"/>
 
-
-        <ListView x:Name="lstMenu" HorizontalAlignment="Left" Height="230" Margin="0,54,0,0" VerticalAlignment="Top" Width="250" SelectionChanged="LstMenu_SelectionChanged" RequestedTheme="Dark">
+        <ListView Grid.Column="0" x:Name="LstMenu" Foreground="White" HorizontalAlignment="Left" Height="230" Margin="0,54,0,0" VerticalAlignment="Top" Width="250" SelectionChanged="LstMenu_SelectionChanged">
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                        <TextBlock Text="{Binding Icon}" Foreground="White" FontFamily="Segoe MDL2 Assets" FontSize="16" Margin="0,0,8,0" VerticalAlignment="Center"/>
-                        <TextBlock Text="{Binding Name}" Foreground="{ThemeResource ApplicationForegroundThemeBrush}" VerticalAlignment="Center" />
+                    <StackPanel Orientation="Horizontal">
+                        <Grid Height="Auto" Width="4" HorizontalAlignment="Left" Background="{Binding SelectedMarker}"/>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="{Binding Icon}" Foreground="White" FontFamily="Segoe MDL2 Assets" FontSize="16" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding Name}" Foreground="White" VerticalAlignment="Center" />
+                        </StackPanel>
                     </StackPanel>
                 </DataTemplate>
             </ListView.ItemTemplate>

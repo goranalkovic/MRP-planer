@@ -107,6 +107,9 @@
       <DependentUpon>MrpCalc.xaml</DependentUpon>
     </Compile>
     <Compile Include="MrpItem.cs" />
+    <Compile Include="ReportPlannedItems.xaml.cs">
+      <DependentUpon>ReportPlannedItems.xaml</DependentUpon>
+    </Compile>
     <Compile Include="TableColumn.cs" />
     <Compile Include="WelcomePage.xaml.cs">
       <DependentUpon>WelcomePage.xaml</DependentUpon>
@@ -121,15 +124,53 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\error_tone.wav" />
+    <Content Include="Assets\Icons\AppList.altform-unplated_targetsize-16.png" />
+    <Content Include="Assets\Icons\AppList.altform-unplated_targetsize-24.png" />
+    <Content Include="Assets\Icons\AppList.altform-unplated_targetsize-256.png" />
+    <Content Include="Assets\Icons\AppList.altform-unplated_targetsize-32.png" />
+    <Content Include="Assets\Icons\AppList.altform-unplated_targetsize-48.png" />
+    <Content Include="Assets\Icons\AppList.scale-100.png" />
+    <Content Include="Assets\Icons\AppList.scale-125.png" />
+    <Content Include="Assets\Icons\AppList.scale-150.png" />
+    <Content Include="Assets\Icons\AppList.scale-200.png" />
+    <Content Include="Assets\Icons\AppList.scale-400.png" />
+    <Content Include="Assets\Icons\AppList.targetsize-16.png" />
+    <Content Include="Assets\Icons\AppList.targetsize-24.png" />
+    <Content Include="Assets\Icons\AppList.targetsize-256.png" />
+    <Content Include="Assets\Icons\AppList.targetsize-32.png" />
+    <Content Include="Assets\Icons\AppList.targetsize-48.png" />
+    <Content Include="Assets\Icons\Large310x310Logo.scale-100.png" />
+    <Content Include="Assets\Icons\Large310x310Logo.scale-125.png" />
+    <Content Include="Assets\Icons\Large310x310Logo.scale-150.png" />
+    <Content Include="Assets\Icons\Large310x310Logo.scale-200.png" />
+    <Content Include="Assets\Icons\Large310x310Logo.scale-400.png" />
+    <Content Include="Assets\Icons\Medium150x150Logo.scale-100.png" />
+    <Content Include="Assets\Icons\Medium150x150Logo.scale-125.png" />
+    <Content Include="Assets\Icons\Medium150x150Logo.scale-150.png" />
+    <Content Include="Assets\Icons\Medium150x150Logo.scale-200.png" />
+    <Content Include="Assets\Icons\Medium150x150Logo.scale-400.png" />
+    <Content Include="Assets\Icons\Small71x71Logo.scale-100.png" />
+    <Content Include="Assets\Icons\Small71x71Logo.scale-125.png" />
+    <Content Include="Assets\Icons\Small71x71Logo.scale-150.png" />
+    <Content Include="Assets\Icons\Small71x71Logo.scale-200.png" />
+    <Content Include="Assets\Icons\Small71x71Logo.scale-400.png" />
+    <Content Include="Assets\Icons\SplashScreen.scale-100.png" />
+    <Content Include="Assets\Icons\SplashScreen.scale-125.png" />
+    <Content Include="Assets\Icons\SplashScreen.scale-150.png" />
+    <Content Include="Assets\Icons\SplashScreen.scale-200.png" />
+    <Content Include="Assets\Icons\SplashScreen.scale-400.png" />
+    <Content Include="Assets\Icons\StoreLogo.scale-100.png" />
+    <Content Include="Assets\Icons\StoreLogo.scale-125.png" />
+    <Content Include="Assets\Icons\StoreLogo.scale-150.png" />
+    <Content Include="Assets\Icons\StoreLogo.scale-200.png" />
+    <Content Include="Assets\Icons\StoreLogo.scale-400.png" />
+    <Content Include="Assets\Icons\Wide310x150Logo.scale-100.png" />
+    <Content Include="Assets\Icons\Wide310x150Logo.scale-125.png" />
+    <Content Include="Assets\Icons\Wide310x150Logo.scale-150.png" />
+    <Content Include="Assets\Icons\Wide310x150Logo.scale-200.png" />
+    <Content Include="Assets\Icons\Wide310x150Logo.scale-400.png" />
     <Content Include="Assets\win10_acryllic_noise.png" />
     <Content Include="Properties\Default.rd.xml" />
-    <Content Include="Assets\LockScreenLogo.scale-200.png" />
-    <Content Include="Assets\SplashScreen.scale-200.png" />
-    <Content Include="Assets\Square150x150Logo.scale-200.png" />
-    <Content Include="Assets\Square44x44Logo.scale-200.png" />
-    <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
-    <Content Include="Assets\StoreLogo.png" />
-    <Content Include="Assets\Wide310x150Logo.scale-200.png" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -145,6 +186,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="MrpCalc.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ReportPlannedItems.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

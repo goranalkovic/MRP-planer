@@ -8,25 +8,28 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
-// ReSharper disable PossibleNullReferenceException
-
 namespace MRP_planer
 {
     public sealed partial class ItemBuilder
     {
+        // Liste za dodavanje objekata (bruto potrebe i planirani inputi)
         public ObservableCollection<GrossNeedItem> Grsnds = new ObservableCollection<GrossNeedItem>();
         public ObservableCollection<PlannedInputItem> PlndIns = new ObservableCollection<PlannedInputItem>();
 
+        // Glavni objekt
         public MrpItem ObjectItems = new MrpItem();
         public ObservableCollection<MrpItem> ListViewItems = new ObservableCollection<MrpItem>();
 
+        // Undo helperi
         public MrpItem UndoHelper;
         public int UndoItemCounter;
-
-        public bool IsInitialised = false;
         public static CancellationTokenSource WaitCancelSrc = new CancellationTokenSource();
         public static CancellationToken WaitCancel = WaitCancelSrc.Token;
 
+        // Init helper
+        public bool IsInitialised = false;
+
+        // Page init
         public ItemBuilder()
         {
             InitializeComponent();
@@ -43,15 +46,15 @@ namespace MRP_planer
             LstObjectTree.ItemsSource = ListViewItems;
 
             LstObjectTree.SelectedIndex = 0;
-
-
         }
 
+        // Save changes when switching from page
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
             App.GlobalItem = ObjectItems.Clone();
         }
 
+        // Utility functions
         private void InitListView(MrpItem item)
         {
             ListViewItems.Clear();
@@ -62,61 +65,13 @@ namespace MRP_planer
         private void FillListView(MrpItem l)
         {
             ListViewItems.Add(l);
-            if (l.ItemChildren == null || l.ItemChildren.Count <= 0) return;
+            if (l.ItemChildren == null || l.ItemChildren.Count <= 0)
+                return;
+
             foreach (var subitem in l.ItemChildren)
             {
                 FillListView(subitem);
             }
-        }
-
-        private void LstObjectTree_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            BtnDeleteCurrent.IsEnabled = ListViewItems.Count != 1;
-
-            var selected = LstObjectTree.SelectedItem as MrpItem;
-
-            if (selected == ObjectItems)
-                BtnDeleteCurrent.IsEnabled = false;
-
-            if (selected != null)
-            {
-                ItemSelectedIcon.Text = selected.ItemIcon;
-                ItemSelectedName.Text = $"{selected.Name}";
-                var qtyWord = selected.Quantity.ToString().EndsWith("1") ? "komad" : "komada";
-#if DEBUG
-                ItemSelectedQty.Text = $"{selected.Quantity} {qtyWord} p: {FindParent(ObjectItems, selected).Name}";
-#else
-                ItemSelectedQty.Text = $"{selected.Quantity} {qtyWord}";
-#endif
-                ItemSelectedAcqTime.Text = $"{selected.AcquireDays} dan(a)";
-                ItemSelectedAvailable.Text = $"{selected.AvailableInStorage}";
-
-                if (selected.LotSize != "Lot for lot (L4L)")
-                {
-                    ItemSelectedLotSize.Text = selected.LotSize + selected.LotSizeNum;
-                }
-                else
-                {
-                    ItemSelectedLotSize.Text = selected.LotSize;
-                }
-
-                ItemSelectedPlannedInput.Text = "";
-                ItemSelectedGrossReq.Text = "";
-
-                if (selected.GrossNeeds.Count > 0)
-                    foreach (var i in selected.GrossNeeds)
-                        ItemSelectedGrossReq.Text += $"{i.Textual} {Environment.NewLine}";
-                else
-                    ItemSelectedGrossReq.Text = "-";
-
-                if (selected.PlannedInput.Count > 0)
-                    foreach (var j in selected.PlannedInput)
-                        ItemSelectedPlannedInput.Text += $"{j.Textual} {Environment.NewLine}";
-                else
-                    ItemSelectedPlannedInput.Text = "-";
-
-            }
-
         }
 
         private static MrpItem FindParent(MrpItem l, MrpItem searchItem)
@@ -164,13 +119,61 @@ namespace MRP_planer
                         s.ItemChildren.Add(l);
                     }
                 }
+        }
 
+        // Right pane populating
+        private void LstObjectTree_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            BtnDeleteCurrent.IsEnabled = ListViewItems.Count != 1;
+
+            var selected = LstObjectTree.SelectedItem as MrpItem;
+
+            if (selected == ObjectItems)
+                BtnDeleteCurrent.IsEnabled = false;
+
+            if (selected != null)
+            {
+                ItemSelectedIcon.Text = selected.ItemIcon;
+                ItemSelectedName.Text = $"{selected.Name}";
+                var qtyWord = selected.Quantity.ToString().EndsWith("1") ? "komad" : "komada";
+                //ItemSelectedQty.Text = $"{selected.Quantity} {qtyWord} p: {FindParent(ObjectItems, selected).Name}";  // For debug
+                ItemSelectedQty.Text = $"{selected.Quantity} {qtyWord}";
+                ItemSelectedAcqTime.Text = $"{selected.AcquireDays} dan(a)";
+                ItemSelectedAvailable.Text = $"{selected.AvailableInStorage}";
+
+                ItemSelectedLotSize.Text = selected.LotSize != "Lot for lot (L4L)"
+                    ? selected.LotSize + selected.LotSizeNum
+                    : selected.LotSize;
+
+                ItemSelectedPlannedInput.Text = "";
+                ItemSelectedGrossReq.Text = "";
+
+                if (selected.GrossNeeds.Count > 0)
+                    foreach (var i in selected.GrossNeeds)
+                        ItemSelectedGrossReq.Text += $"{i.Textual} {Environment.NewLine}";
+                else
+                    ItemSelectedGrossReq.Text = "-";
+
+                if (selected.PlannedInput.Count > 0)
+                    foreach (var j in selected.PlannedInput)
+                        ItemSelectedPlannedInput.Text += $"{j.Textual} {Environment.NewLine}";
+                else
+                    ItemSelectedPlannedInput.Text = "-";
+
+            }
 
         }
 
+        private static string OnlyNums(string input)
+        {
+            return string.Join("", input.Where(char.IsDigit));
+        }
+
+
+        // Event handlers
         private void BtnDeleteCurrent_Click(object sender, RoutedEventArgs e)
         {
-       UndoItemCounter = 0;
+            UndoItemCounter = 0;
 
             // ReSharper disable once UnusedVariable
             foreach (var t in ObjectItems.ItemChildren)
@@ -211,21 +214,18 @@ namespace MRP_planer
             DeletedBanner.Y = 0;
 
             var waitTaskFactory = new TaskFactory();
-            var wait = new Task(async () =>
+         
+            waitTaskFactory.StartNew(async () =>
             {
                 while (!WaitCancel.IsCancellationRequested)
                 {
                     await Task.Delay(TimeSpan.FromSeconds(3));
-                    await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => {
+                    await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.High, () =>
+                    {
                         DeletedBanner.Y = 60;
                     });
                 }
             }, WaitCancel);
-
-            waitTaskFactory.StartNew(() =>
-            {
-                wait.Start();
-            });
         }
 
         private async void BtnAddNew_Click(object sender, RoutedEventArgs e)
@@ -279,10 +279,6 @@ namespace MRP_planer
             TxtPlnInDay.IsEnabled = true;
             CdAddNewItem.IsPrimaryButtonEnabled = true;
         }
-        private static string OnlyNums(string input)
-        {
-            return string.Join("", input.Where(char.IsDigit));
-        }
 
         private void MainPartDays_LostFocus(object sender, RoutedEventArgs e)
         {
@@ -294,75 +290,59 @@ namespace MRP_planer
             MainPartAvailableQty.Text = OnlyNums(MainPartAvailableQty.Text);
         }
 
+        // Add new item
         private void CdAddNewItem_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            var crntLvl = (LstObjectTree.SelectedItem as MrpItem).Level;
-
-            var sel = FindParent((MrpItem)LstObjectTree.SelectedItem, (MrpItem)LstObjectTree.SelectedItem);
-
-
-            var icon = MainPartIcon.SelectedItem as ComboBoxItem;
-
-            var mainItem = new MrpItem
+            var mrpItem = LstObjectTree.SelectedItem as MrpItem;
+            if (mrpItem != null)
             {
-                Name = MainPartName.Text,
-                AcquireDays = int.Parse(MainPartDays.Text),
-                AvailableInStorage = int.Parse(MainPartAvailableQty.Text),
-                PlannedInput = PlndIns.ToList(),
-                ItemIcon = icon.Content.ToString(),
-                GrossNeeds = Grsnds.ToList(),
-                ItemChildren = new List<MrpItem>(),
-                Quantity = int.Parse(MainPartQuantity.Text),
-                Level = crntLvl + 1
-            };
+                var crntLvl = mrpItem.Level;
+        
+                var sel = FindParent((MrpItem)LstObjectTree.SelectedItem, (MrpItem)LstObjectTree.SelectedItem);
+            
+                var icon = MainPartIcon.SelectedItem as ComboBoxItem;
 
-            if (RadioLotSize1.IsChecked == true)
-            {
-                mainItem.LotSize = "Lot for lot (L4L)";
-                mainItem.LotSizeNum = 1;
+                var mainItem = new MrpItem
+                {
+                    Name = MainPartName.Text,
+                    AcquireDays = int.Parse(MainPartDays.Text),
+                    AvailableInStorage = int.Parse(MainPartAvailableQty.Text),
+                    PlannedInput = PlndIns.ToList(),
+                    ItemIcon = icon.Content.ToString(),
+                    GrossNeeds = Grsnds.ToList(),
+                    ItemChildren = new List<MrpItem>(),
+                    Quantity = int.Parse(MainPartQuantity.Text),
+                    Level = crntLvl + 1
+                };
+
+                if (RadioLotSize1.IsChecked == true)
+                {
+                    mainItem.LotSize = "Lot for lot (L4L)";
+                    mainItem.LotSizeNum = 1;
+                }
+
+                if (RadioLotSize2.IsChecked == true)
+                {
+                    mainItem.LotSize = "Mult ";
+                    mainItem.LotSizeNum = int.Parse(TxtRadio2.Text);
+                }
+
+                if (RadioLotSize3.IsChecked == true)
+                {
+                    mainItem.LotSize = "Minimalno ";
+                    mainItem.LotSizeNum = int.Parse(TxtRadio3.Text);
+                }
+
+                var ind = sel.IndentSize;
+
+                ind.Left += 30;
+
+                mainItem.IndentSize = ind;
+
+                AddItem(mainItem, sel);
             }
-
-            if (RadioLotSize2.IsChecked == true)
-            {
-                mainItem.LotSize = "Mult ";
-                mainItem.LotSizeNum = int.Parse(TxtRadio2.Text);
-            }
-
-            if (RadioLotSize3.IsChecked == true)
-            {
-                mainItem.LotSize = "Minimalno ";
-                mainItem.LotSizeNum = int.Parse(TxtRadio3.Text);
-            }
-
-            var ind = sel.IndentSize;
-
-            ind.Left += 30;
-
-            mainItem.IndentSize = ind;
-
-            //AddItem(mainItem, (MrpItem)LstObjectTree.SelectedItem);
-            AddItem(mainItem, sel);
 
             InitListView(ObjectItems);
-        }
-
-        private void CdAddNewItem_CloseButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
-            MainPartIcon.SelectedIndex = 0;
-            MainPartName.Text = "";
-            MainPartDays.Text = "";
-            MainPartAvailableQty.Text = "";
-            RadioLotSize2.IsChecked = false;
-            RadioLotSize1.IsChecked = false;
-            RadioLotSize3.IsChecked = false;
-            TxtRadio2.Text = "";
-            TxtRadio3.Text = "";
-            MainPartQuantity.Text = "";
-
-            Grsnds.Clear();
-
-            //if (ListViewItems.Count == 1)
-            //    btnRemoveGrossNeed.IsEnabled = false;
         }
 
         private void MainPartQuantity_LostFocus(object sender, RoutedEventArgs e)
@@ -390,8 +370,6 @@ namespace MRP_planer
             PlndIns.Add(plndin);
             PlannedInputList.ItemsSource = PlndIns;
             BtnRemovePlanedInput.IsEnabled = true;
-            //TxtPlnInAmount.Text = "";
-            //TxtPlnInDay.Text = "";
         }
 
         private void BtnRemovePlanedInput_OnClick(object sender, RoutedEventArgs e)
@@ -518,17 +496,36 @@ namespace MRP_planer
 
         private void UndoDelete(object sender, RoutedEventArgs e)
         {
-            WaitCancelSrc.Cancel();
+            WaitCancelSrc.Cancel(true);
 
             ObjectItems = UndoHelper.Clone();
 
             InitListView(ObjectItems);
 
-            LstObjectTree.SelectedIndex = 0;
+            //LstObjectTree.SelectedIndex = 0;
 
             BtnDeleteCurrent.IsEnabled = false;
 
             DeletedBanner.Y = 60;
+
+            WaitCancelSrc.Dispose();
+        }
+
+        private void CdAddNewItem_OnClosing(ContentDialog sender, ContentDialogClosingEventArgs args)
+        {
+            MainPartIcon.SelectedIndex = 0;
+            MainPartName.Text = "";
+            MainPartDays.Text = "";
+            MainPartAvailableQty.Text = "";
+            RadioLotSize2.IsChecked = false;
+            RadioLotSize1.IsChecked = false;
+            RadioLotSize3.IsChecked = false;
+            TxtRadio2.Text = "";
+            TxtRadio3.Text = "";
+            MainPartQuantity.Text = "";
+
+            Grsnds.Clear();
+            PlndIns.Clear();
         }
     }
 }

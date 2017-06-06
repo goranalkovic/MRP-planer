@@ -7,10 +7,8 @@ using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Shapes;
-// ReSharper disable CompareOfFloatsByEqualityOperator
-// ReSharper disable SwitchStatementMissingSomeCases
-
 namespace MRP_planer
 {
     public sealed partial class MrpCalc
@@ -29,19 +27,10 @@ namespace MRP_planer
 
             TableItems.ItemsSource = Tables;
 
-            //AddTables(MainItem);
             AddTable(MainItem);
         }
 
-        //public void AddTables(MrpItem item)
-        //{
-        //    AddTable(item);
-        //    if (item.ItemChildren.Count > 0)
-        //    {
-        //        foreach (var c in item.ItemChildren)
-        //            AddTables(c);
-        //    }
-        //}
+ 
         private static MrpItem FindParent(MrpItem l, MrpItem searchItem)
         {
             if (searchItem == l)
@@ -106,6 +95,7 @@ namespace MRP_planer
 
                     // samo popuna "raspoloživo" iz lijevog
 
+                    // ReSharper disable once CompareOfFloatsByEqualityOperator
                     if (colValues[i, 1] == 0 && i > 0)
                     {
                         colValues[i, 3] = colValues[i, 2] + colValues[i - 1, 3];
@@ -160,10 +150,7 @@ namespace MRP_planer
                     }
 
                 }
-
-
-
-
+                
                 // 7. spremi lokacije planiranih izdavanja
                 for (var i = 0; i < NumberOfColumns; i++)
                 {
