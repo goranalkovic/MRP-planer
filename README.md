@@ -1,14 +1,14 @@
 
-# MRPplaner
+# MRP planner
 
 Project for the 'Operations management' class at the Faculty of Organization and Informatics Varaždin.
 
-The application is an MRP calculator.
+The application is a <i>Material Resource Planning</i> (MRP) calculator.
 
 ## Basic info
 
-Platform: Universal Windows Platform (UWP)
+<b>Platform:</b> Universal Windows Platform (UWP)
 
-Language: C#
+<b>Language:</b> C#
 
-App language: Croatian (for now)
+<b>App language:</b> Croatian (for now)
